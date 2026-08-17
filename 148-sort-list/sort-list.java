@@ -1,26 +1,66 @@
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
 class Solution {
+
+    // Merge two sorted linked lists
+    ListNode merge(ListNode left, ListNode right) {
+
+        ListNode dummy = new ListNode(0);
+        ListNode temp = dummy;
+
+        while (left != null && right != null) {
+
+            if (left.val < right.val) {
+                temp.next = left;
+                left = left.next;
+            }
+            else {
+                temp.next = right;
+                right = right.next;
+            }
+
+            temp = temp.next;
+        }
+
+        // Remaining elements
+        if (left != null) {
+            temp.next = left;
+        }
+
+        if (right != null) {
+            temp.next = right;
+        }
+
+        return dummy.next;
+    }
+
+
+    // Merge Sort
     public ListNode sortList(ListNode head) {
-        ArrayList<Integer> a=new ArrayList<>();
-        ListNode t=head,temp=head;
-        while(t!=null){
-            a.add(t.val);
-            t=t.next;
+
+        // Base case
+        if (head == null || head.next == null) {
+            return head;
         }
-        Collections.sort(a);
-        for(int i=0;i<a.size();i++){
-            temp.val=a.get(i);
-            temp=temp.next;
+
+        // Find middle
+        ListNode slow = head;
+        ListNode fast = head.next;
+
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
         }
-        return head;
+
+        // Divide into two parts
+        ListNode right = slow.next;
+        slow.next = null;
+
+        // Sort left part
+        ListNode left = sortList(head);
+
+        // Sort right part
+        right = sortList(right);
+
+        // Merge both parts
+        return merge(left, right);
     }
 }
