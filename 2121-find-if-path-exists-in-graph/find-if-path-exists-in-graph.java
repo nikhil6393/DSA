@@ -1,39 +1,42 @@
 class Solution {
-    private boolean seen;
-    
     public boolean validPath(int n, int[][] edges, int start, int end) {
-        boolean[] visited = new boolean[n];
-        HashSet<Integer>[] graph = new HashSet[n];
-        int i, j;
-        
-        for(i = 0; i < n; i++){
-            graph[i] = new HashSet<Integer>();
+        if(start == end) return true;
+
+        List<List<Integer>> adj = new ArrayList<>();
+
+        for(int i = 0; i < n; i++){
+            List<Integer> list = new ArrayList<>();
+            adj.add(list);
         }
-        
-        for(int[] edge : edges){
-            graph[edge[0]].add(edge[1]);
-            graph[edge[1]].add(edge[0]);
+
+        for(int i = 0; i < edges.length; i++){
+            int a = edges[i][0], b = edges[i][1];
+            adj.get(a).add(b);
+            adj.get(b).add(a);
         }
-        
-		if(graph[start].contains(end)){  // direct connection exists
-             return true;
-        }
-		
-        seen = false;
-        dfs(graph, visited, start, end);
-        return seen;
+
+        boolean[] vis = new boolean[n];
+        vis[start] = true;
+
+        bfs(start, adj, vis, end);
+
+        return vis[end];
     }
-    
-    private void dfs(HashSet<Integer>[] graph, boolean[] visited, int start, int end){
-        if(!visited[start] && !seen){
-            if(start == end){
-                seen = true;
-                return;
-            }
-            
-            visited[start] = true;
-            for(Integer neighbor : graph[start]){
-                dfs(graph, visited, neighbor, end);
+
+    private void bfs(int start, List<List<Integer>> adj, boolean[] vis, int end) {
+        Queue<Integer> q = new LinkedList<>();
+        q.add(start);
+
+        while(q.size() > 0){
+            int front = q.remove();
+
+            for(int ele : adj.get(front)){
+                if(!vis[ele]){
+                    q.add(ele);
+                    vis[ele] = true;
+
+                    if(ele == end) return;
+                }
             }
         }
     }
